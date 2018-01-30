@@ -16,7 +16,7 @@ class Connection implements Runnable {
 	private 	String nomPage=System.getProperty("user.dir");
 	private boolean fichierExiste;
 	private String navigateur;
-
+	private String page;
 
 
 
@@ -55,6 +55,13 @@ class Connection implements Runnable {
 			String fichier = nomPage+chemin[1];
 			File f = new File(fichier);
 			fichierExiste=f.exists();
+			
+			String pageAffiche = null; // La page à afficher
+			page = st.nextToken();
+			System.out.println("Nom de la page avant : "+page);
+			page = page.substring(1); // On enlève le "/"
+			System.out.println("Nom de la page apres : "+page);
+			pageAffiche = lireBodyPage(page); // On met le body de la page a afficher dans pageAffiche
 
 			while (!line.equals("")) {
 				line = br.readLine();
@@ -66,6 +73,7 @@ class Connection implements Runnable {
 				if(line.contains("User-Agent")) {
 					if(line.contains("Safari"))
 						navigateur="Safari";
+						header=pageAffiche;
 				}
 
 				while (st.hasMoreTokens()) {
@@ -93,9 +101,7 @@ class Connection implements Runnable {
 			BufferedReader reader = new BufferedReader(fr);
 			String lecture = reader.readLine();
 
-			while (!lecture.equals("</html>")) { // Tant qu'il y a des choses à
-				// lire
-
+			while (!lecture.equals("</html>")) { // Tant qu'il y a des choses à lire
 				if (lecture.equals("<body>"))
 					read = true;
 				if (lecture.equals("</body>"))
